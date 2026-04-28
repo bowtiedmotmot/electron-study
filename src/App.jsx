@@ -130,7 +130,7 @@ function HintTooltip({ text }) {
 }
 
 const AnswerField = forwardRef(function AnswerField(
-  { field, value, onChange, submitted, correct, answer },
+  { field, value, onChange, submitted, correct, answer, math },
   ref
 ) {
   const isRight = submitted && correct;
@@ -169,8 +169,10 @@ const AnswerField = forwardRef(function AnswerField(
           </span>
         )}
         {isWrong && (
-          <span className="text-red-600 font-semibold text-sm flex items-center gap-1">
-            <XIcon /> Answer: <strong>{answer}</strong>
+          <span className="text-red-600 text-sm flex items-center gap-1.5 flex-wrap">
+            <XIcon />
+            <span className="font-semibold">Answer: <strong>{answer}</strong></span>
+            {math && <span className="text-red-400 font-mono text-xs">{math}</span>}
           </span>
         )}
       </div>
@@ -326,18 +328,28 @@ export default function App() {
       {/* Answer Form */}
       <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {FIELDS.map((field, i) => (
-            <AnswerField
-              key={field.key}
-              field={field}
-              value={inputs[field.key]}
-              onChange={val => handleInput(field.key, val)}
-              submitted={submitted}
-              correct={parseInt(inputs[field.key], 10) === answers[field.key]}
-              answer={answers[field.key]}
-              ref={i === 0 ? firstInputRef : undefined}
-            />
-          ))}
+          {FIELDS.map((field, i) => {
+            const chargeStr = charge < 0 ? `(${charge})` : `${charge}`;
+            const mathFor = {
+              protons:    `= atomic # ${element.atomicNumber}`,
+              neutrons:   `${element.massNumber} − ${element.atomicNumber}`,
+              massNumber: `${answers.protons} + ${answers.neutrons}`,
+              electrons:  `${answers.protons} − ${chargeStr}`,
+            };
+            return (
+              <AnswerField
+                key={field.key}
+                field={field}
+                value={inputs[field.key]}
+                onChange={val => handleInput(field.key, val)}
+                submitted={submitted}
+                correct={parseInt(inputs[field.key], 10) === answers[field.key]}
+                answer={answers[field.key]}
+                math={mathFor[field.key]}
+                ref={i === 0 ? firstInputRef : undefined}
+              />
+            );
+          })}
         </div>
 
         {!submitted && (

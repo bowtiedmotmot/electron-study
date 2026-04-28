@@ -11,7 +11,7 @@ Presents a random element with a charge (neutral, positive, or negative ion) and
 - Number of **neutrons**
 - **Mass number**
 
-After submitting, it shows which answers were right, walks through the step-by-step math, and draws an atom diagram with electrons in their shells. A streak counter rewards correct runs.
+After submitting, it shows which answers were right. Wrong answers display the step-by-step calculation inline (e.g. `12 − 6` for neutrons), then walks through the full explanation below and draws an atom diagram. A streak counter rewards correct runs.
 
 ## The rules it teaches
 
