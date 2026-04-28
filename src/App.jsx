@@ -110,6 +110,7 @@ function HintTooltip({ text }) {
   return (
     <span className="relative inline-block ml-1.5">
       <button
+        type="button"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
         onFocus={() => setOpen(true)}

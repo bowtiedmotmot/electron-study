@@ -33,6 +33,8 @@ npm run dev
 
 Open `http://localhost:5173` in a browser, or `http://<your-local-ip>:5173` on a phone or iPad (same Wi-Fi network).
 
+The **?** hint buttons work on both desktop (hover or click) and mobile (tap to toggle).
+
 ## Stack
 
 - [React 18](https://react.dev)
