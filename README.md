@@ -37,7 +37,7 @@ Open `http://localhost:5173` in a browser, or `http://<your-local-ip>:5173` on a
 
 - [React 18](https://react.dev)
 - [Tailwind CSS 3](https://tailwindcss.com)
-- [Vite 5](https://vitejs.dev)
+- [Vite 6](https://vitejs.dev)
 
 ## Project structure
 
