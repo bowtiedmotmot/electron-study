@@ -105,17 +105,58 @@ function AtomDiagram({ protons, electrons, neutrons }) {
   );
 }
 
-function HintTooltip({ text }) {
-  const [open, setOpen] = useState(false);
+function HintTooltip({ text, tooltipId }) {
+  const [pinned, setPinned] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const open = pinned || hovered;
+  const containerRef = useRef(null);
+
+  // Close when another tooltip opens
+  useEffect(() => {
+    function onOther(e) {
+      if (e.detail !== tooltipId) setPinned(false);
+    }
+    window.addEventListener('hint-open', onOther);
+    return () => window.removeEventListener('hint-open', onOther);
+  }, [tooltipId]);
+
+  // Click outside to close
+  useEffect(() => {
+    if (!pinned) return;
+    function onOutside(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setPinned(false);
+      }
+    }
+    document.addEventListener('pointerdown', onOutside);
+    return () => document.removeEventListener('pointerdown', onOutside);
+  }, [pinned]);
+
+  function openThis() {
+    window.dispatchEvent(new CustomEvent('hint-open', { detail: tooltipId }));
+  }
+
+  function handlePointerEnter(e) {
+    if (e.pointerType === 'mouse') { setHovered(true); openThis(); }
+  }
+  function handlePointerLeave(e) {
+    if (e.pointerType === 'mouse') setHovered(false);
+  }
+  function handleClick() {
+    const next = !pinned;
+    setPinned(next);
+    if (next) openThis();
+  }
+
   return (
-    <span className="relative inline-block ml-1.5">
+    <span ref={containerRef} className="relative inline-block ml-1.5">
       <button
         type="button"
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
-        onFocus={() => setOpen(true)}
-        onBlur={() => setOpen(false)}
-        onClick={() => setOpen(v => !v)}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        onFocus={() => { setPinned(true); openThis(); }}
+        onBlur={() => setPinned(false)}
+        onClick={handleClick}
         className="w-6 h-6 rounded-full bg-indigo-200 text-indigo-700 text-xs font-bold hover:bg-indigo-300 active:bg-indigo-400 transition-colors touch-manipulation"
         aria-label="Show hint"
       >?</button>
@@ -147,7 +188,7 @@ const AnswerField = forwardRef(function AnswerField(
       <label className="flex items-center gap-1 text-sm sm:text-base font-semibold text-gray-700 mb-2">
         <span>{field.icon}</span>
         {field.label}
-        <HintTooltip text={field.hint} />
+        <HintTooltip text={field.hint} tooltipId={field.key} />
       </label>
       <div className="flex items-center gap-3">
         <input
